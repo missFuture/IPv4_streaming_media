@@ -1,0 +1,5 @@
+gcc -g server.c -o server  thr_channel.c thr_list.c medialib.c mytbf.c -I ../include/ -lpthreadmgroup
+
+gdb server
+
+set args -F
