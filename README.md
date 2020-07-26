@@ -20,3 +20,32 @@
 <div align=center>
 <img width = '1057' height = '733' src = "https://github.com/missFuture/zte-com2020/blob/master/images/服务端-客户端.png"/>
 </div>
+
+## How to use this repository
+### 编译
+```powershell
+git clone https://github.com/missFuture/IPv4_streaming_media.git
+cd clinet/
+make
+cd ../server
+make
+```
+### 设置本地媒体库
+|/var
+<br/>|---media</br>
+| --- | --- ch1
+<br/>| --- | --- | --- desc.txt</br>
+| --- | --- | --- 1.mp3
+<br/>| --- | --- | --- 2.mp3</br>
+| --- | --- | --- 需要人陪.mp3
+<br/>| --- | --- ch2</br>
+| --- | --- | --- desc.txt
+<br/>| --- | --- | --- 3.mp3</br>
+| --- | --- | --- 4.mp3
+<br/>| --- | --- | --- 你不知道的事.mp3</br>
+| --- | --- ch3
+<br/>| --- | --- | --- desc.txt</br>
+| --- | --- | --- 好心分手.mp3
+<br/>| --- | --- ...</br>
+**注**：频道目录chn（ch1, ch2, ch3...）位于 **/var/media** 目录下（如果不存在需要自己创建），每一个频道中包含需要播放的媒体文件（mp3），以及该频道音乐的类型（中文，英文，流行，古典？），将该标签写入 **desc.txt** ，将来会在节目单频道出现供用户选择。
+
