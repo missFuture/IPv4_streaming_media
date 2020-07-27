@@ -17,9 +17,9 @@
 
 
 ## 系统框架
-<div align=center>
+<p align="center">
 <img width = '1057' height = '733' src = "https://github.com/missFuture/zte-com2020/blob/master/images/服务端-客户端.png"/>
-</div>
+</p>
 
 ## How to use this repository
 ### 编译
