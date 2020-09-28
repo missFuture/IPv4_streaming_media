@@ -6,7 +6,7 @@
 #include <getopt.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-//#include <proto.h>  
+//#include <proto.h>
 #include "../include/proto.h"
 #include <arpa/inet.h>
 #include <errno.h>
@@ -26,7 +26,7 @@ struct client_conf_st client_conf = {\
         .rcvport = DEFAULT_RCVPORT,\
         .mgroup = DEFAULT_MGROUP,\
         .player_cmd = DEFAULT_PLAYERCMD,\
-        .mgroup = DEFAULT_MGROUP};
+        };
 
 static void print_help()
 {
@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
 
     /*
     initializing
-    level:default < configuration file < 
+    level:default < configuration file <
           environment < arg
 
     */
@@ -69,7 +69,7 @@ int main(int argc, char * argv[])
     int sd = 0;
     struct ip_mreqn mreq;//group setting
     struct sockaddr_in laddr; //local address
-    int val;//set sockopt 
+    int val;//set sockopt
     int pd[2];
     pid_t pid;
     struct sockaddr_in server_addr;
@@ -84,6 +84,7 @@ int main(int argc, char * argv[])
     struct option argarr[] = {{"port", 1, NULL, 'P'}, \
                               {"mgroup", 1, NULL, 'M'},\
                               {"help", 0, NULL, 'H'},\
+                              {"player", 1, NULL, 'p'},\
                               {NULL, 0, NULL, 0}};
     int c;
     while(1)
@@ -120,7 +121,7 @@ int main(int argc, char * argv[])
         perror("socket()");
         exit(0);
     }
-    //multicast group 
+    //multicast group
     inet_pton(AF_INET, client_conf.mgroup, &mreq.imr_multiaddr);//255.255.255.255-->0xFF..
     //local address(self)
     inet_pton(AF_INET, "0.0.0.0", &mreq.imr_address);
@@ -146,18 +147,9 @@ int main(int argc, char * argv[])
         perror("bind()");
         exit(1);
     }
-    if(pipe(pd) < 0 )
-    {
-        perror("pipe()");
-        exit(1);
-    }
+    if(pipe(pd) < 0 ) { perror("pipe()"); exit(1); }
 
-    pid = fork();
-    if(pid < 0)
-    {
-        perror("fork()");
-        exit(1);
-    }
+    pid = fork(); if(pid < 0) { perror("fork()"); exit(1); }
     if(pid == 0)//child, read, close write
     {
         /*decode*/
@@ -221,7 +213,7 @@ int main(int argc, char * argv[])
             ret = scanf("%d", &chosenid);
             if(ret != 1)
                 exit(1);
-        } 
+        }
 
         msg_channel = malloc(MSG_CHANNEL_MAX);
         if(msg_channel == NULL)
@@ -249,7 +241,7 @@ int main(int argc, char * argv[])
             {
                 fprintf(stderr, "Ignore:port not match.\n");
                 continue;
-                //exit(1);  
+                //exit(1);
             }
             if(len < sizeof(struct msg_channel_st))
             {
@@ -262,7 +254,7 @@ int main(int argc, char * argv[])
                 fprintf(stdout, "Accept massage:%d recived.\n", msg_channel->chnid);
                 if( writen(pd[1], msg_channel->data, len - sizeof(chnid_t)) < 0)/*write pipe*/
                     exit(1);
-                    
+
             }
         }
 
