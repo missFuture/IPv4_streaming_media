@@ -5,9 +5,10 @@
 #include <errno.h>
 #include <error.h>
 #include <pthread.h>
+#include <signal.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include "mytbf.h"
 struct mytbf_st
 {
@@ -24,25 +25,35 @@ static pthread_mutex_t mut_job = PTHREAD_MUTEX_INITIALIZER;
 static pthread_once_t once_init = PTHREAD_ONCE_INIT;
 static pthread_t tid;
 
-static void *thr_alrm(void* p)
-{
-    while(1)
-    {
-        pthread_mutex_lock(&mut_job);
-        for(int i = 0 ; i < MYTBF_MAX; i++)
-        {
-            if(job[i] != NULL)
-            {
+static void alrm_handle(int sig) {
+    pthread_mutex_lock(&mut_job);
+        for (int i = 0; i < MYTBF_MAX; ++i) {
+            if (job[i] != NULL) {
                 pthread_mutex_lock(&job[i]->mut);
                 job[i]->token += job[i]->cps;
-                if(job[i]->token > job[i]->burst)
+                if (job[i]->token > job[i]->burst) {
                     job[i]->token = job[i]->burst;
-                pthread_cond_broadcast(&job[i]->cond);
+                }
+                pthread_cond_broadcast(&job[i]->cond); // 惊群
                 pthread_mutex_unlock(&job[i]->mut);
             }
         }
-        pthread_mutex_unlock(&mut_job);
-        sleep(1);
+    pthread_mutex_unlock(&mut_job);
+}
+
+static void *thr_alrm(void *p) {
+    struct itimerval tick;
+    memset(&tick, 0, sizeof(tick));
+    tick.it_value.tv_sec = 1;  // sec
+    tick.it_value.tv_usec = 0; // micro sec.
+    tick.it_interval.tv_sec = 1;
+    tick.it_interval.tv_usec = 0;
+
+    signal(SIGALRM, alrm_handle);
+    setitimer(ITIMER_REAL, &tick, NULL);
+
+    while (1) {
+        pause();
     }
 }
 static  void module_unload()
