@@ -26,7 +26,7 @@ struct client_conf_st client_conf = {\
         .rcvport = DEFAULT_RCVPORT,\
         .mgroup = DEFAULT_MGROUP,\
         .player_cmd = DEFAULT_PLAYERCMD,\
-        .mgroup = DEFAULT_MGROUP};
+        };
 
 static void print_help()
 {
@@ -84,6 +84,7 @@ int main(int argc, char * argv[])
     struct option argarr[] = {{"port", 1, NULL, 'P'}, \
                               {"mgroup", 1, NULL, 'M'},\
                               {"help", 0, NULL, 'H'},\
+                              {"player", 1, NULL, 'p'},\
                               {NULL, 0, NULL, 0}};
     int c;
     while(1)
